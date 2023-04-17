@@ -60,7 +60,7 @@ To add the latent targets to the pickle files, run the `notebooks/data_processin
 
 ### Additional data processing 
 
-In the folder `notesbooks/data_proccessing` additional notebooks are provided for additional data processing for the CxC, VSRN,, and TERN dataset
+In the folder `notesbooks/data_proccessing` additional notebooks are provided for additional data processing for the CxC, VSRN, and TERN dataset
 
 - A notebook to add the size of the images, needed for TERN for normalizing the bbox coordinates, to the pickle files ` notebooks/data_proccessing/add-img-size-to-data`.
 - A notebook to add the precomputed features for TERN to the pickle file `notebooks/data_proccessing/add-precomputed-tern-images.ipynb` (`add-precomputed-tern-images.py` is similar, but just a plain python file).
@@ -98,7 +98,7 @@ To train other and different model configurations, we change the following train
 - `--model.caption_encoder.tune_from_start`: Tune the word embeddings for the caption encoder from the start of the training.
 - `--lr_scheduler.name`: LR schedule used for training. The default is `cosine_annealing`, other option is `multi_step_lr`.
 - `--lr_scheduler.milestones`: Number of epochs before lowering the lr with factor `finetune_lr_decay`. Only when using `multi_step_lr`.
-- `--criterion.name`" InfoNCE or triplet, choice of contrastive loss.
+- `--criterion.name` infonce or triplet, choice of contrastive loss.
 
 All the other hyperparameters can be found in `configs/{coco, f30k}/{coco, f30k}_tmlr.yaml`. 
 
