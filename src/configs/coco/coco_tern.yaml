@@ -1,0 +1,118 @@
+dataset:
+    dataset_name: 'coco'
+    root: '<path to pickle files>'
+    train_pickle: 'train_set_ltd_l_tern_s.pickle'
+    val_pickle: 'validation_set_ltd_l_tern_s.pickle'
+    test_pickle: 'test_set_ltd_l_tern_s.pickle'
+    vocab_file: 'coco_vocab.pkl'
+    captions_per_image: 5
+
+experiment:
+    wandb_project: 'tern_experiments'
+    experiment_name: 'coco_tern'
+    wandb_dir: '/output/coco/tern_experiments'
+    out_dir: '/output/coco/tern_experiments'
+    cache_dir: '/output/coco/tern_experiments'
+
+dataloader:
+    batch_size: 128
+    eval_batch_size: 64
+    num_workers: 10
+    crop_size: 224
+    random_erasing_prob: 0.0
+    caption_drop_prob: 0.0
+    target_key: 'target'
+
+model:
+    name: TERN
+    embed_dim: 1024
+    caption_encoder:
+        wemb_type: glove
+        word_dim: 300
+        tune_from_start: False
+        txt_finetune: True
+        init_weights: True
+    image_encoder:
+         img_finetune: False
+         cnn_type: resnet50
+         tune_from_start: False
+    target_decoder:
+        decode_target: False
+        reconstruction_dim: 768
+        hidden_features: 1024
+        input_decoding: False
+    vsrn:
+        use_model: False
+        embed_dim: 2048
+        no_imgnorm: False
+        image_encoder:
+            img_dim: 2048 # dim of the precomputed features
+        caption_encoder:
+            word_dim: 300
+            num_layers: 1
+    tern:
+        use_model: True
+        image_model:
+            feat_dim: 2048
+            pos_encoding: 'concat-and-process'
+            transformer_layers: 4
+            dropout: 0.1
+        text_model:
+            word_dim: 768
+            layers: 0
+            pretrain: 'bert-base-uncased'
+            extraction_hidden_layer: 6
+            dropout: 0.1
+            pre_extracted: False
+            fine_tune: True
+        model:
+            dropout: 0.1
+            layers: 2
+            embed_size: 1024
+            text_aggregation: 'first'
+            image_aggregation: 'first'
+            shared_transformer: True
+
+
+# optimizer configuration
+optimizer:
+    name: adamp
+    learning_rate: 0.002
+    weight_decay: 0.0
+    weight_averaging:
+        use_weight_averaging: False
+        checkpoints: 5
+        percentage: 0.9
+    warmup: 'linear'
+    warmup_period: 1000
+
+# lr scheduler configuration
+lr_scheduler:
+    name: multi_step_lr
+    T_max: 30
+    milestones: [30]
+
+# criterion configuration
+criterion:
+    name: 'triplet'
+    tau: 0.05
+    margin: 0.2
+    reconstruction_metric: 'cosine'
+
+recconstruction_constraint:
+    use_constraint: False
+    alpha: 0.90
+    bound: 0.2
+    start_val: 1.
+    max: 100.
+
+# detailed training configuration
+train:
+    model_save_path: model_last.pth
+    best_model_save_path: model_best.pth
+    n_epochs: 30
+    finetune_lr_decay: 0.1
+    log_step: 100
+    grad_clip: 2
+    val_epochs: 1
+    use_fp16: False

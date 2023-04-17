@@ -1,0 +1,19 @@
+#!/bin/sh
+# The following lines instruct Slurm to allocate one GPU.
+#SBATCH -p gpu
+#SBATCH --gres=gpu:1
+#SBATCH --mem=80gb
+#SBATCH --time=40:00:00
+#SBATCH -o vsrn_coco_experiment_%A_%a.out
+#SBATCH -c 12
+#SBATCH --array=1-8
+
+# Set-up the environment.
+
+
+conda activate image_caption_retrieval
+
+HPARAMS_FILE=$(pwd)/VSRN_hyperparams.txt
+
+# Start the experiment.
+python train.py --yaml_file configs/coco/coco_vsrn.yaml $(head -$SLURM_ARRAY_TASK_ID $HPARAMS_FILE | tail -1)

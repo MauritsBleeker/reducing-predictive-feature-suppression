@@ -1,0 +1,19 @@
+#!/bin/sh
+# The following lines instruct Slurm to allocate one GPU.
+#SBATCH -p gpu
+#SBATCH --gres=gpu:1
+#SBATCH --mem=60gb
+#SBATCH --time=60:00:00
+#SBATCH -o tern_infonce_coco_experiment_%A_%a.out
+#SBATCH -c 12
+#SBATCH --array=1-8
+
+# Set-up the environment.
+
+
+conda activate image_caption_retrieval
+
+HPARAMS_FILE=$(pwd)/TERN_hyperparams.txt
+
+# Start the experiment.
+python train.py --yaml_file configs/coco/coco_tern.yaml $(head -$SLURM_ARRAY_TASK_ID $HPARAMS_FILE | tail -1)
