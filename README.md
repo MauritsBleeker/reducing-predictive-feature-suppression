@@ -2,8 +2,9 @@
 
 This is the PyTorch code repository for the TMLR paper (accepted with minor revisions): [Reducing Predictive Feature Suppression in Resource-Constrained Contrastive Image-Caption Retrieval](https://openreview.net/forum?id=T1XtOqrVKn), by [Maurits Bleeker](https://mauritsbleeker.github.io)<sup>1</sup>, [Andrew Yates](https://andrewyates.net)<sup>1</sup>, and [Maarten de Rijke](https://staff.fnwi.uva.nl/m.derijke/)<sup>1</sup>.
 
-If you have any questions, please open an issue or feel free to send an email to m.j.r.bleeker@uva.nl.
+If you have any questions, please open an issue or feel free to send an email to [m.j.r.bleeker@uva.nl](m.j.r.bleeker@uva.nl).
 
+<sup>1</sup>University of Amsterdam, The Netherlands
 ## Introduction
 
 The code of this work is mainly based on the code repositories of [PCME](https://github.com/naver-ai/pcme), [VSRR](https://github.com/KunpengLi1994/VSRN), and [VSE++](https://github.com/fartashf/vsepp) , [TERN](https://github.com/mesnico/TERN) 
