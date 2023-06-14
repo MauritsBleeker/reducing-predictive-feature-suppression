@@ -7,6 +7,7 @@ import wandb
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from munch import Munch
+from contextlib import nullcontext
 from data.dataset import Dataset
 from data.dataset import collate_fn
 from torch.utils.data import DataLoader
@@ -73,18 +74,7 @@ class Trainer(object):
 			idx=0
 		)
 
-		assert self.config.criterion.name == 'infonce' or self.config.criterion.name == 'triplet' or self.config.criterion.name == 'barlow'
-
-		# move to a function or class
-		if self.config.criterion.name == 'infonce':
-			self.contrastive_criterion = InfoNCE(self.config.criterion.tau)
-		elif self.config.criterion.name == 'triplet':
-			self.contrastive_criterion = Triplet(margin=self.config.criterion.margin, max_violation=True)
-		elif self.config.criterion.name == 'barlow':
-			# not used for paper experiments
-			self.contrastive_criterion = BarlowTwinsLoss(embed_dim=self.config.model.embed_dim, device=self.model.cap_encoder_device)
-		else:
-			raise NotImplementedError("Loss is not implemented")
+		self.set_contrastive_criterion()
 
 		if self.config.model.target_decoder.decode_target:
 
@@ -229,28 +219,13 @@ class Trainer(object):
 
 		self.optimizer.zero_grad()
 
-		if self.config.recconstruction_constraint.use_constraint:
+		if self.config.reconstruction_constraint.use_constraint:
 			self.decoding_loss.constraint_opt.zero_grad()
 
 		if self.config.model.target_decoder.input_decoding:
 			targets = tokens
 
-		if self.config.train.use_fp16:
-
-			with amp.autocast():
-
-				z_images, z_captions, reconstructions = self.model(
-					images.to(self.model.img_encoder_device),
-					tokens.to(self.model.cap_encoder_device),
-					cap_lengths,
-					img_boxes
-				)
-
-				loss, contrastive_loss, reconstruction_loss = self.compute_loss(z_images, z_captions, reconstructions, targets, mask)
-
-			self.scaler.scale(loss).backward()
-
-		else:
+		with amp.autocast() if self.config.training.use_fp16 else nullcontext():
 
 			z_images, z_captions, reconstructions = self.model(
 				images.to(self.model.img_encoder_device),
@@ -261,6 +236,9 @@ class Trainer(object):
 
 			loss, contrastive_loss, reconstruction_loss = self.compute_loss(z_images, z_captions, reconstructions, targets, mask)
 
+		if self.config.train.use_fp16:
+			self.scaler.scale(loss).backward()
+		else:
 			loss.backward()
 
 		self.optimizer_step()
@@ -288,7 +266,7 @@ class Trainer(object):
 			else:
 				self.scaler.step(self.optimizer)
 
-			if self.config.model.target_decoder.decode_target and self.config.recconstruction_constraint.use_constraint:
+			if self.config.model.target_decoder.decode_target and self.config.reconstruction_constraint.use_constraint:
 				self.scaler.step(self.decoding_loss.constraint_opt)
 
 			self.scaler.update()
@@ -298,7 +276,7 @@ class Trainer(object):
 			else:
 				self.optimizer.step()
 
-			if self.config.model.target_decoder.decode_target and self.config.recconstruction_constraint.use_constraint:
+			if self.config.model.target_decoder.decode_target and self.config.reconstruction_constraint.use_constraint:
 				self.decoding_loss.constraint_opt.step()
 
 	def compute_loss(self, z_images, z_captions, reconstructions=None, targets=None, mask=None):
@@ -374,7 +352,7 @@ class Trainer(object):
 				'reconstruction_loss': reconstruction_loss.data,
 			}, step=self.step)
 
-			if self.config.recconstruction_constraint.use_constraint:
+			if self.config.reconstruction_constraint.use_constraint:
 				# log the multiplier
 				wandb.log({
 					'multiplier': self.decoding_loss.reconstruction_constraint.multiplier.data
@@ -425,6 +403,26 @@ class Trainer(object):
 			os.makedirs(directory)
 
 		torch.save(state_dict, os.path.join(directory, file_name))
+
+	def set_contrastive_criterion(self):
+		"""
+		Set the contrastive criterion
+		"""
+
+		assert self.config.criterion.name == 'infonce' or self.config.criterion.name == 'triplet' or self.config.criterion.name == 'barlow'
+
+		if self.config.criterion.name == 'infonce':
+			self.contrastive_criterion = InfoNCE(self.config.criterion.tau)
+		elif self.config.criterion.name == 'triplet':
+			self.contrastive_criterion = Triplet(margin=self.config.criterion.margin, max_violation=True)
+		elif self.config.criterion.name == 'barlow':
+			# not used for paper experiments
+			self.contrastive_criterion = BarlowTwinsLoss(
+				embed_dim=self.config.model.embed_dim,
+				device=self.model.cap_encoder_device
+			)
+		else:
+			raise NotImplementedError("Loss is not implemented")
 
 
 def main(yaml_file, **kwargs):

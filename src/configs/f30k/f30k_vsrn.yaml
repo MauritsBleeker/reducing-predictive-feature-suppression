@@ -73,7 +73,7 @@ criterion:
     margin: 0.2
     reconstruction_metric: 'cosine'
 
-recconstruction_constraint:
+reconstruction_constraint:
     use_constraint: False
     alpha: 0.90
     bound:  0.2

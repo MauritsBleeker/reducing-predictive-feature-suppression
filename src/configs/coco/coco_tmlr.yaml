@@ -21,7 +21,7 @@ dataloader:
     crop_size: 224
     random_erasing_prob: 0.2
     caption_drop_prob: 0.1
-    target_key: 'target'
+    target_key: 'target-large'
 
 model:
     name: ltd
@@ -39,7 +39,7 @@ model:
     target_decoder:
         decode_target: False
         reconstruction_dim: 384
-        hidden_features: 512
+        hidden_features: 1024
         input_decoding: False
 
 
@@ -66,7 +66,7 @@ criterion:
     margin: 0.2
     reconstruction_metric: 'cosine'
 
-recconstruction_constraint:
+reconstruction_constraint:
     use_constraint: False
     alpha: 0.90
     bound:  0.2

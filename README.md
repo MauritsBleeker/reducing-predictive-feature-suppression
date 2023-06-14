@@ -88,9 +88,9 @@ To train other and different model configurations, we change the following train
  
 - `--experiment.experiment_name`: name of the experiment. Used for the WandB logging and to store the model checkpoints.
 - `--model.target_decoder.decode_target`: Decode a target for the caption representation.
-- `--recconstruction_constraint.use_constraint`:  Use constraint-based optimization.
+- `--reconstruction_constraint.use_constraint`:  Use constraint-based optimization.
 - `--model.target_decoder.input_decoding`: Decode the caption in the input space.
-- `--recconstruction_constraint.bound`: Lower bound value for the optimization constraint. 
+- `--reconstruction_constraint.bound`: Lower bound value for the optimization constraint. 
 - `--optimizer.weight_averaging.use_weight_averaging`: Use [Stochastic Weight Averaging](https://pytorch.org/blog/stochastic-weight-averaging-in-pytorch/). 
 - `--model.image_encoder.cnn_type`: The type of ResNet used for the image encoder backbone. Default is `resnet50`.
 - `--train.n_epochs`: Number of training epcohs. Default value is `60`.
