@@ -1,5 +1,5 @@
 """
-Image encoder based on PCME implementation.
+Caption encoder based on PCME implementation.
 Reference code:
 https://github.com/naver-ai/pcme/blob/main/models/caption_encoder.py
 """
