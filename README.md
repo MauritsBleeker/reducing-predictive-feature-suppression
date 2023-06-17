@@ -32,12 +32,12 @@ We store the entire dataset in a pickle file, to make training faster than loadi
 
 Please note that most pre-processing files use a fixed file path, you have to change this to the locations where you have stored the data/output files. 
 
-Please use the following URLs for the precomputed [VSRR](https://github.com/KunpengLi1994/VSRN) and [TERN](https://github.com/mesnico/TERN) features.
+Please use the following URLs for the precomputed [VSRN](https://github.com/KunpengLi1994/VSRN) and [TERN](https://github.com/mesnico/TERN) features.
 
 ### Data processing
 
 The caption annotations and train/val/test splits for the Flicker30k and MS-COCO dataset can be downloaded [here](http://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip).
-In the folder `annotations/f30k` we provide the JSON file for the Flicker30k dataset. The json file for MS-COCO is too big to upload to GitHub. 
+In the folder `annotations/f30k` we provide the JSON file for the Flicker30k dataset. The JSON file for MS-COCO is too big to upload to GitHub. 
 
 To generate the pickle file, run the function `process_dataset(json_file, img_folder, dset_name, root, k=5)` from the file `data/data_processing.py`.   
 
@@ -59,14 +59,14 @@ To add the latent targets to the pickle files, run the `notebooks/data_processin
 
 ### Additional data processing 
 
-In the folder `notesbooks/data_proccessing` additional notebooks are provided for additional data processing for the CxC, VSRN, and TERN dataset
+In the folder `notebooks/data_proccessing` additional notebooks are provided for additional data processing for the CxC, VSRN, and TERN dataset
 
 - A notebook to add the size of the images, needed for TERN for normalizing the bounding boxes coordinates, to the pickle files ` notebooks/data_proccessing/add-img-size-to-data`.
 - A notebook to add the precomputed features for TERN to the pickle file `notebooks/data_proccessing/add-precomputed-tern-images.ipynb` (`add-precomputed-tern-images.py` is similar, but just a plain python file).
 
 ## Training and reproducing experiments 
 
-To run the training script, simply run the one line command:
+To run the training script, simply run the one-line command:
  
  ```
  python train.py --yaml_file configs/f30k/f30k_tmlr.yaml
@@ -78,13 +78,13 @@ python train.py --yaml_file configs/coco/coco_tmlr.yaml
 ```
 for the COCO dataset.
 
-In the folder `configs/{coco, f30k}/{coco, f30k}_tmlr.yaml` the config yaml files are provided to the base models for experiments 5.1-5.4.
+In the folder `configs/{coco, f30k}/{coco, f30k}_tmlr.yaml` the config.yaml files are provided to the base models for experiments 5.1-5.4.
 
 To run the experiments for experiment 5.5 run either `python train.py --yaml_file configs/coco/coco_vsrn.yaml` or  `python train.py --yaml_file configs/f30k/f30k_vsrn.yaml` to train with the VSRN image encoder, or `python train.py --yaml_file configs/coco/coco_tern.yaml` to train with TERN.
 
 ### Training hyperparameters used in this work
 
-To train other and different model configurations, we change the following training hyper parameters.
+To train other and different model configurations, we change the following training hyperparameters.
  
 - `--experiment.experiment_name`: name of the experiment. Used for the WandB logging and to store the model checkpoints.
 - `--model.target_decoder.decode_target`: Decode a target for the caption representation.
@@ -95,7 +95,7 @@ To train other and different model configurations, we change the following train
 - `--model.image_encoder.cnn_type`: The type of ResNet used for the image encoder backbone. Default is `resnet50`.
 - `--train.n_epochs`: Number of training epcohs. Default value is `60`.
 - `--model.caption_encoder.tune_from_start`: Tune the word embeddings for the caption encoder from the start of the training.
-- `--lr_scheduler.name`: LR schedule used for training. The default is `cosine_annealing`, other option is `multi_step_lr`.
+- `--lr_scheduler.name`: LR schedule used for training. The default is `cosine_annealing`, another option is `multi_step_lr`.
 - `--lr_scheduler.milestones`: Number of epochs before lowering the lr with factor `finetune_lr_decay`. Only when using `multi_step_lr`.
 - `--criterion.name` infonce or triplet, choice of contrastive loss.
 
