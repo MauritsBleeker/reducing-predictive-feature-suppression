@@ -7,7 +7,7 @@ If you have any questions, please open an issue or feel free to send an email to
 <sup>1</sup>University of Amsterdam, The Netherlands
 ## Introduction
 
-The code of this work is mainly based on the code repositories of [PCME](https://github.com/naver-ai/pcme), [VSRR](https://github.com/KunpengLi1994/VSRN), [VSE++](https://github.com/fartashf/vsepp), and [TERN](https://github.com/mesnico/TERN). 
+The code of this work is mainly based on the code repositories of [PCME](https://github.com/naver-ai/pcme), [VSRN](https://github.com/KunpengLi1994/VSRN), [VSE++](https://github.com/fartashf/vsepp), and [TERN](https://github.com/mesnico/TERN). 
 
 Not all experiments we have run made it into the final version of the paper.
 
